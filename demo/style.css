@@ -1,0 +1,55 @@
+* {
+	margin: 0;
+	padding: 0;
+	transition: all 0.2s;
+	font-family: arial;
+	font-size: 20px;
+}
+
+body {
+	background: #f8f8f8;
+}
+
+.board-wrapper {
+	position: absolute;
+	top: 30px;
+	bottom: 30px;
+	left: 30px;
+	right: 30px;
+
+	border: 2px solid #ccc;
+}
+.board-tools {
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+.board-tools-item {
+	display: block;
+	width: 40px;
+	height: 40px;
+
+	background: #444;
+	color: #fff;
+	line-height: 40px;
+	text-align: center;
+	text-decoration: none;
+}
+.board-tools-item:hover {
+	background: #777;
+}
+.board-eventLayer {
+	display: none;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+
+	background: transparent;
+}
+
+.board {
+	width: 100%;
+	height: 100%;
+}

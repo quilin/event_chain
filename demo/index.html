@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html data-ember-extension="1"><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
+    <title>Event.Chain Demo</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+  </head>
+  <body>
+    <div class="board-wrapper" id="DrawingBoard">
+      <svg id="Board" class="board"><svg height="229" version="1.1" width="846" xmlns="http://www.w3.org/2000/svg" style="overflow: hidden; position: relative;"><desc style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">Created with Raphaël 2.1.2</desc><defs style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"></defs></svg></svg>
+      <div class="board-eventLayer" id="EventLayer"></div>
+      <div class="board-tools">
+        <a href="javascript:void(0)" class="board-tools-item" data-type="line">L</a>
+      </div>
+    </div>
+
+    <script type="text/javascript" src="../source/guid_factory.js"></script>
+    <script type="text/javascript" src="../source/state_machine.js"></script>
+    <script type="text/javascript" src="../source/base_event.js"></script>
+    <script type="text/javascript" src="../source/cycle_event.js"></script>
+    <script type="text/javascript" src="../source/meta_event.js"></script>
+    <script type="text/javascript" src="../source/event_chain.js"></script>
+    <script type="text/javascript" src="jquery.js"></script>
+    <script type="text/javascript" src="../source/eventchain_jquery_plugin.js"></script>
+    <script type="text/javascript" src="raphael.js"></script>
+    <script type="text/javascript">
+      var LineDrawer = new (function () {
+        var board = Raphael("Board"),
+          eventLayer = $("#EventLayer");
+        this.getPoint = function (evt) {
+          var offset = eventLayer.offset();
+          return {
+            x: evt.pageX - offset.left,
+            y: evt.pageY - offset.top
+          };
+        };
+        this.draw = function (path) {
+          this._p && this._p.remove();
+          this._p = board.path("M" + this._figureData.x1 + "," + this._figureData.y1 + "L" + this._figureData.x2 + "," + this._figureData.y2);
+        };
+        this.placeStartPoint = function (evt) {
+          var point = this.getPoint(evt);
+          this._figureData.x1 = point.x;
+          this._figureData.y1 = point.y;
+        };
+        this.drawTemporaryFigure = function (evt) {
+          this.placeEndPoint(evt);
+          this.draw();
+        };
+        this.cancelDrawing = function (evt) {
+          this._eventChain.dispose();
+          this.startDrawing();
+        };
+        this.placeEndPoint = function (evt) {
+          var point = this.getPoint(evt);
+          this._figureData.x2 = point.x;
+          this._figureData.y2 = point.y;
+        };
+        this.saveFigure = function (evt) {
+          this._p && this._p.remove();
+          board.path("M" + this._figureData.x1 + "," + this._figureData.y1 + "L" + this._figureData.x2 + "," + this._figureData.y2);
+          eventLayer.hide();
+          this.startDrawing();
+        };
+
+        this.startDrawing = function () {
+          this._figureData = {};
+          eventLayer.show();
+
+          this._eventChain = eventLayer.eventChain()
+            .once("mousedown", this.placeStartPoint, this)
+            .any("mousemove", this.drawTemporaryFigure, this)
+            .once("mouseup", this.placeEndPoint, this)
+            .cancel({"keydown": 27}, this.cancelDrawing, this)
+            .atLast(this.saveFigure, this)
+            .init();
+        };
+      })();
+
+      $(".board-tools-item").on("click", function () {
+        LineDrawer.startDrawing();
+      });
+    </script>
+  
+</body></html>
