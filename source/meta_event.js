@@ -41,12 +41,12 @@ MetaEvent.prototype = {
 		evt.init();
 		evt.on(function (evt) {
 			if (this.id === _this._closingEvent.id &&
-				this.callback.apply(this.context || this.element, [evt]) !== false) {
+				this.callback.apply(this.context || this.element, [evt]) !== BaseEvent.Rejected) {
 				_this._stateMachine[_this.name]();
 			} else if (this.id === _this._currentEvent.id) {
 				this.callback.apply(this.context || this.element, [evt]);
 			} else if (this.type !== _this._currentEvent.type &&
-				this.callback.apply(this.context || this.element, [evt]) !== false) {
+				this.callback.apply(this.context || this.element, [evt]) !== BaseEvent.Rejected) {
 				_this._disposePreviousEvents(this.id);
 				_this._currentEvent = _this._eventIndex[this.id];
 			}

@@ -47,3 +47,4 @@ BaseEvent.prototype = {
 		this.element.off(this._uniqueType);
 	}
 };
+BaseEvent.Rejected = {};
